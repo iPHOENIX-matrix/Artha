@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Outer background (device feel) */
+body {
+  background-color: #18181b; /* zinc-900 */
+}
+
+/* Remove unwanted spacing */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* App container */
+#root {
+  display: flex;
+  justify-content: center;
+}
