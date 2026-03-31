@@ -4,6 +4,8 @@ import {
   Repeat,
   Sparkles,
   TrendingUp,
+  Landmark,
+  Bell,
 } from "lucide-react";
 import { getTransactions } from "../services/transactionService";
 import {
@@ -20,6 +22,7 @@ import {
 import { useFinanceStore } from "../store/useFinanceStore";
 import TransferModal from "../components/accounts/TransferModal";
 import SpendModal from "../components/dashboard/SpendModal";
+import { runSubscriptionEngine } from "../utils/subscriptionEngine";
 
 export default function Dashboard() {
   const [netWorth, setNetWorth] = useState(0);
@@ -36,6 +39,13 @@ export default function Dashboard() {
     (s) => s.refreshKey
   );
 
+const setPage = useFinanceStore((s) => s.setPage);
+
+  // ✅ RUN ENGINE ONLY ONCE
+  useEffect(() => {
+    runSubscriptionEngine();
+  }, []);
+
   useEffect(() => {
     const load = async () => {
       const transactions =
@@ -43,6 +53,7 @@ export default function Dashboard() {
       const cards =
         await getCreditCards();
       const fds = await getFDs();
+      
       const monthlyLimit =
         await getMonthlyCreditSpendLimit();
 
@@ -286,6 +297,25 @@ export default function Dashboard() {
             % total utilization
           </p>
         </div>
+      </div>
+
+      {/* 🆕 NEW SECTION: FDs + Subs */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => setPage("fds")}
+          className="group bg-gradient-to-r from-indigo-600 to-blue-600 p-4 rounded-2xl font-semibold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+        >
+          <Landmark size={18} className="group-hover:scale-110 transition" />
+          My FDs
+        </button>
+
+        <button
+          onClick={() => setPage("subs")}
+          className="group bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-2xl font-semibold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+        >
+          <Bell size={18} className="group-hover:scale-110 transition" />
+          My Subs
+        </button>
       </div>
     </div>
   );

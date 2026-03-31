@@ -47,12 +47,58 @@ export interface SpendingLimit {
   creditMonthlyLimit: number;
 }
 
+/* =========================
+   🆕 FINANCE PLANNER TYPES
+========================= */
+
+export interface Plan {
+  id: string;
+  title: string;
+  targetAmount: number;
+  savedAmount: number;
+  createdAt: number;
+  targetDate?: number; // ✅ NEW
+}
+
+export interface PlanTransaction {
+  id: string;
+  planId: string;
+  amount: number;
+  bankAccountId: string;
+  type: "SAVE" | "WITHDRAW";
+  createdAt: number;
+}
+
+/* =========================
+   🆕 SUBSCRIPTIONS
+========================= */
+
+export interface Subscription {
+  id: string;
+  name: string;
+  amount: number;
+  billingCycle: "MONTHLY" | "YEARLY" | "QUARTERLY";
+  renewalDate: number;
+  autoDebit: boolean;
+
+  paymentSource?: "BANK" | "CREDIT";
+  bankAccountId?: string;
+  creditCardId?: string;
+
+  lastProcessedDate?: number;
+}
+
 class ArthaDB extends Dexie {
   accounts!: Dexie.Table<BankAccount, string>;
   creditCards!: Dexie.Table<CreditCard, string>;
   transactions!: Dexie.Table<Transaction, string>;
   fds!: Dexie.Table<FD, string>;
   limits!: Dexie.Table<SpendingLimit, string>;
+
+  plans!: Dexie.Table<Plan, string>;
+  planTransactions!: Dexie.Table<PlanTransaction, string>;
+
+  subscriptions!: Dexie.Table<Subscription, string>;
 
   constructor() {
     super("ArthaDB");
@@ -64,6 +110,43 @@ class ArthaDB extends Dexie {
         "id, type, category, bankAccountId, toBankAccountId, creditCardId",
       fds: "id, bankAccountId",
       limits: "id",
+    });
+
+    this.version(3).stores({
+      accounts: "id",
+      creditCards: "id",
+      transactions:
+        "id, type, category, bankAccountId, toBankAccountId, creditCardId",
+      fds: "id, bankAccountId",
+      limits: "id",
+      plans: "id",
+      planTransactions: "id, planId, bankAccountId",
+    });
+
+    // ✅ NEW VERSION (SAFE UPGRADE)
+    this.version(4).stores({
+      accounts: "id",
+      creditCards: "id",
+      transactions:
+        "id, type, category, bankAccountId, toBankAccountId, creditCardId",
+      fds: "id, bankAccountId",
+      limits: "id",
+      plans: "id, targetDate",
+      planTransactions: "id, planId, bankAccountId",
+    });
+
+    this.version(5).stores({
+      accounts: "id",
+      creditCards: "id",
+      transactions:
+        "id, type, category, bankAccountId, toBankAccountId, creditCardId",
+      fds: "id, bankAccountId",
+      limits: "id",
+      plans: "id, targetDate",
+      planTransactions: "id, planId, bankAccountId",
+
+      // 🆕 NEW
+      subscriptions: "id, renewalDate",
     });
   }
 }

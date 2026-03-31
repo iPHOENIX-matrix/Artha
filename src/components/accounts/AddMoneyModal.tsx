@@ -9,17 +9,19 @@ export default function AddMoneyModal({
 }: {
   accountId: string;
   onClose: () => void;
-  defaultType: "INCOME" | "EXPENSE";
+  defaultType: "INCOME";
 }) {
   const [amount, setAmount] = useState("");
+  const [source, setSource] = useState("");
   const refresh = useFinanceStore((s) => s.refresh);
 
   const handleSubmit = async () => {
     if (!amount) return;
 
     await addTransaction({
-      type: defaultType,
+      type: "INCOME",
       amount: Number(amount),
+      category: source || "General",
       bankAccountId: accountId,
     });
 
@@ -28,31 +30,43 @@ export default function AddMoneyModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 p-5 rounded-2xl w-[90%] max-w-sm">
-        <h2 className="text-lg font-semibold mb-3">
-          {defaultType === "INCOME" ? "Add Money" : "Spend Money"}
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-2xl w-[90%] max-w-sm border border-zinc-800 shadow-2xl space-y-4">
+        
+        {/* 🔝 Title */}
+        <h2 className="text-lg font-semibold text-white">
+          Add Money 💰
         </h2>
 
+        {/* 💰 Amount */}
         <input
-          className="w-full p-3 rounded-lg bg-zinc-800 outline-none"
+          className="w-full p-3 rounded-lg bg-zinc-800 outline-none focus:ring-2 focus:ring-green-500"
           placeholder="Enter amount"
+          type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
+        {/* 🧾 Source */}
+        <input
+          className="w-full p-3 rounded-lg bg-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Source (Salary, Gift, Freelance...)"
+          value={source}
+          onChange={(e) => setSource(e.target.value)}
+        />
+
+        {/* ✅ CTA */}
         <button
           onClick={handleSubmit}
-          className={`w-full mt-4 p-2 rounded-lg ${
-            defaultType === "INCOME" ? "bg-green-600" : "bg-red-600"
-          }`}
+          className="w-full mt-2 p-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 font-medium shadow-lg shadow-green-500/20 active:scale-95 transition"
         >
-          {defaultType === "INCOME" ? "Add Money" : "Spend"}
+          Add Money
         </button>
 
+        {/* ❌ Cancel */}
         <button
           onClick={onClose}
-          className="w-full mt-2 bg-zinc-700 p-2 rounded-lg"
+          className="w-full bg-zinc-700 p-2 rounded-lg text-sm hover:bg-zinc-600 transition"
         >
           Cancel
         </button>

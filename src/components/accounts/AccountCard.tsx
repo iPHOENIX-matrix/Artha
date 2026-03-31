@@ -13,7 +13,6 @@ export default function AccountCard({
 }) {
   const [balance, setBalance] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [actionType, setActionType] = useState<"INCOME" | "EXPENSE">("INCOME");
 
   const refreshKey = useFinanceStore((s) => s.refreshKey);
 
@@ -40,25 +39,12 @@ export default function AccountCard({
           </div>
 
           {/* 💎 Actions */}
-          <div className="flex flex-col gap-2">
+          <div>
             <button
-              onClick={() => {
-                setActionType("INCOME");
-                setShowModal(true);
-              }}
+              onClick={() => setShowModal(true)}
               className="bg-white/10 hover:bg-white/20 text-green-400 px-3 py-1 rounded-lg text-xs transition-all"
             >
               + Add
-            </button>
-
-            <button
-              onClick={() => {
-                setActionType("EXPENSE");
-                setShowModal(true);
-              }}
-              className="bg-white/10 hover:bg-white/20 text-red-400 px-3 py-1 rounded-lg text-xs transition-all"
-            >
-              Spend
             </button>
           </div>
         </div>
@@ -71,7 +57,7 @@ export default function AccountCard({
         <AddMoneyModal
           accountId={id}
           onClose={() => setShowModal(false)}
-          defaultType={actionType}
+          defaultType="INCOME"
         />
       )}
     </>
