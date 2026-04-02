@@ -62,9 +62,9 @@ export default function PlannerAnalytics() {
           }
         }
 
-        if (t.type === "FD_BOOKED") {
-          bankBalance[t.bankAccountId] -= t.amount;
-        }
+        // if (t.type === "FD_BOOKED") {
+        //   bankBalance[t.bankAccountId] -= t.amount;
+        // }
       });
 
       const planMap: Record<string, Record<string, number>> = {};
